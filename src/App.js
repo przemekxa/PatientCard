@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import PatientList from './PatientList'
+import PatientHomePage from './PatientHomePage'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      selectedPatientID: null,
+    }
+
+  }
+
+
+  selectPatient(id) {
+    this.setState({selectedPatientID: id})
+  }
+
+
+  render() {
+    let main = this.state.selectedPatientID ? <PatientHomePage onReturn={() => this.setState({selectedPatientID: null})} /> : <PatientList onClick={(id) => this.selectPatient(id)}  />
+
+    return (
+      <div>
+        {main}
+      </div>
+    )
+  }
 }
 
 export default App;
