@@ -1,6 +1,6 @@
 import React from 'react'
-import PatientList from './PatientList'
-import PatientHomePage from './PatientHomePage'
+import PatientListPage from './PatientListPage/PatientListPage'
+import PatientHomePage from './PatientHomePage/PatientHomePage'
 
 class App extends React.Component {
 
@@ -20,7 +20,7 @@ class App extends React.Component {
 
 
   render() {
-    let main = this.state.selectedPatientID ? <PatientHomePage onReturn={() => this.setState({selectedPatientID: null})} /> : <PatientList onClick={(id) => this.selectPatient(id)}  />
+    let main = this.state.selectedPatientID ? <PatientHomePage onReturn={() => this.setState({selectedPatientID: null})} /> : <PatientListPage onClick={(id) => this.selectPatient(id)}  />
 
     return (
       <div>
