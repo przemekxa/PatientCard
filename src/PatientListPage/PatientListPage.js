@@ -1,69 +1,51 @@
 import React /*, { useState, useEffect }*/ from 'react'
 import FilterBar from './FilterBar/FilterBar'
-import fhirHandler from '../service/fhirHandler'
+import { CircularProgress } from '@material-ui/core'
 
 class PatientListPage extends React.Component {
   constructor(props) {
     super(props)
 
-    this.fhirHandler = new fhirHandler()
-
     this.state = {
+      isLoading: true,
       patients: []
     }
   }
-  
     
   componentDidMount() {
     this.updatePatientList("", "")
   }
 
-
-    render() {
-      let patientsHtml = this.state.patients.map(p => 
-        <p key={p.id} onClick={() => this.props.onClick(p.id)}>{JSON.stringify(p)}</p>
+  render() {
+    let patientsList;
+    if(this.state.isLoading) {
+      patientsList = <CircularProgress style={{margin: '16px auto', display: 'block'}} />
+    } else {
+      patientsList = this.state.patients.map(p => 
+        <p key={p.id} onClick={() => this.props.onClick(p.id)} style={{cursor: 'pointer'}}>{p.name}</p>
       )
-      return (
-        <div className="mainBox">
-          
-          <FilterBar onFilter={(nameFilter, displayCountFilter) => this.updatePatientList(nameFilter, displayCountFilter)} />
-          
-          {patientsHtml}
+    }
+    return (
+      <div className="mainBox">
         
-        </div>
-      );
-    }
+        <FilterBar
+          onFilter={(nameFilter, displayCountFilter) => this.updatePatientList(nameFilter, displayCountFilter)}
+          />
+        
+        {patientsList}
+        
+        
+      
+      </div>
+    );
+  }
 
-    async updatePatientList(nameFilter, displayCountFilter) {
-      const patients = await this.fhirHandler.getPatientList(nameFilter, displayCountFilter)
-      console.log(patients)
-      this.setState({patients: patients})
-    }
+  async updatePatientList(nameFilter, displayCountFilter) {
+    this.setState({isLoading: true})
+    const patients = await this.props.fhirHandler.getPatientList(nameFilter, displayCountFilter)
+    this.setState({isLoading: false, patients: patients})
+  }
 
 }
-
-
-// function PatientListFunction() {
-
-//     const [patients, setPatients] = useState([])
-
-//     const setPatientsCheck = (newState) => {
-//         if(true) {
-//             setPatients(newState)
-//         }
-//     };
-
-//     useEffect(() => {
-//         // Did mount
-        
-//         return () => {
-//             // Did unmount
-//         }
-//     });
-    
-//     return (
-//         <div></div>
-//     )
-// }
 
 export default PatientListPage;
