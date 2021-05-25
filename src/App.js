@@ -34,8 +34,12 @@ class App extends React.Component {
         onClick={(id) => this.selectPatient(id)} />
     }
 
+    // 1711883
+    // 
+
     return (
       <div>
+        <button onClick={() => this.selectPatient("1438442")}>EXAMPLE</button>
         {main}
       </div>
     )
