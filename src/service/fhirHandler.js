@@ -103,13 +103,11 @@ class FhirHandler {
         return {
           name: o.code.coding[0].display,
           value: this.valueToString(o),
-          date: Date.parse(o.effectiveDateTime)
+          date: Date.parse(o.effectiveDateTime),
+          type: 'Observation'
         }
       })
       .filter(o => o.name && o.value)
-      // .reduce((acc, value) => {
-      //   acc[(new Date(value.date)]
-      // }, {})
 
     // Medications
     let medications = everything
@@ -117,23 +115,35 @@ class FhirHandler {
       .map(m => {
         return {
           name: m.medicationCodeableConcept.coding[0].display,
-          date: Date.parse(m.meta.lastUpdated)
+          date: Date.parse(m.meta.lastUpdated),
+          type: 'Medication'
         }
       })
       .filter(s => s)
 
-    // let joined = observations.concat(medications)
-    // console.log("JOINED", joined)
+    let days = observations.concat(medications)
+      .sort((lhs, rhs) => lhs.date > rhs.date)
+      .reduce((acc, value) => {
+        let date = (new Date(value.date)).toLocaleDateString()
+        if(acc[date]) {
+          acc[date] = acc[date].concat(value)
+        } else {
+          acc[date] = [value]
+        }
+        return acc
+      }, {})
 
     console.log("Patient", patient)
     console.log("Observations", observations)
     console.log("Medications", medications)
+    console.log("Days", days)
     
 
     return {
       patient: patient,
       observations: observations,
-      medications: medications
+      medications: medications,
+      days: days
     }
   }
 }
