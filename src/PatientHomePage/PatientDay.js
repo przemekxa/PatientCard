@@ -30,10 +30,12 @@ class PatientDay extends React.Component {
         <TableCell>{event.value ?? '-'}</TableCell>
       </TableRow>
     )
+
+    let day = (new Date(this.props.day)).toLocaleDateString()
     
     return (
       <Paper style={paperStyle} elevation={2}>
-        <h3>{this.props.day}</h3>
+        <h3>{day}</h3>
         <Button
           variant='contained'
           onClick={() => this.setState({expanded: !this.state.expanded})}>

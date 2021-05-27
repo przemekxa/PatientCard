@@ -38,8 +38,7 @@ class App extends React.Component {
     // 
 
     return (
-      <div>
-        <button onClick={() => this.selectPatient("1438442")}>EXAMPLE</button>
+      <div style={{minWidth: '900px'}}>
         {main}
       </div>
     )

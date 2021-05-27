@@ -1,3 +1,4 @@
+import { format, parseISO, compareDesc } from 'date-fns'
 
 class FhirHandler {
 
@@ -28,7 +29,8 @@ class FhirHandler {
       .map(p => {
         return {
           id: p.id,
-          name: this.patientName(p)
+          name: this.patientName(p),
+          birthDate: (new Date(p.birthDate)).toLocaleDateString()
         }
       })
   }
@@ -82,35 +84,42 @@ class FhirHandler {
     return null
   }
 
-  async getPatient(id) {
-    let everything = await fetch(`${this.url}Patient/${id}/$everything?_count=1000`,)
-    everything = (await everything.json()).entry.map(e => e.resource)
-    console.log("Everything", everything)
-
+  parseEntries(entries) {
     // Patient
-    let patient = everything.find(e => e.resourceType === 'Patient')
-    patient = {
-      id: patient.id,
-      name: this.patientName(patient),
-      birthDate: patient.birthDate,
-      gender: patient.gender,
+    let patientEntry = entries.find(e => e.resourceType === 'Patient')
+    let patient
+    if(patientEntry) {
+      patient = {
+        id: patientEntry.id,
+        name: this.patientName(patientEntry),
+        birthDate: patientEntry.birthDate,
+        gender: patientEntry.gender,
+      }
     }
 
     // Observations
-    let observations = everything
+    let observations = entries
       .filter(e => e.resourceType === 'Observation')
       .map(o => {
+        let rawValue
+        let rawUnit
+        if(o.valueQuantity) {
+          rawValue = o.valueQuantity.value
+          rawUnit = o.valueQuantity.unit
+        }
         return {
           name: o.code.coding[0].display,
           value: this.valueToString(o),
           date: Date.parse(o.effectiveDateTime),
-          type: 'Observation'
+          type: 'Observation',
+          rawValue: rawValue,
+          rawUnit: rawUnit
         }
       })
       .filter(o => o.name && o.value)
 
     // Medications
-    let medications = everything
+    let medications = entries
       .filter(e => (e.resourceType === 'MedicationStatement' || e.resourceType === 'MedicationRequest') && e.medicationCodeableConcept)
       .map(m => {
         return {
@@ -124,7 +133,7 @@ class FhirHandler {
     let days = observations.concat(medications)
       .sort((lhs, rhs) => lhs.date > rhs.date)
       .reduce((acc, value) => {
-        let date = (new Date(value.date)).toLocaleDateString()
+        let date = format(new Date(value.date), "yyyy-MM-dd")
         if(acc[date]) {
           acc[date] = acc[date].concat(value)
         } else {
@@ -133,17 +142,63 @@ class FhirHandler {
         return acc
       }, {})
 
-    console.log("Patient", patient)
-    console.log("Observations", observations)
-    console.log("Medications", medications)
-    console.log("Days", days)
+    return {
+      patient: patient,
+      days: days
+    }
+  }
+
+  async getPatient(id) {
+
+    let patient
+    let days = {}
     
+    let link = `${this.url}Patient/${id}/$everything?_count=1000&start=2008&end=2010-01-01`
+    do {
+      let everything = await fetch(link)
+      everything = (await everything.json())
+      console.log('Fetched', everything)
+
+      let entries = everything.entry.map(e => e.resource)
+      let parsed = this.parseEntries(entries)
+
+      if(parsed.patient) {
+        patient = parsed.patient
+      }
+      for (const [day, events] of Object.entries(parsed.days)) {
+        if(days[day]) {
+          days[day] = days[day].concat(events)
+        } else {
+          days[day] = events
+        }
+      }
+
+      let next = everything.link.find(r => r.relation === 'next')
+      if(next) {
+        link = next.url
+      } else {
+        link = null
+      }
+    } while(link)
+
+    
+
+    let orderedDays = Object.keys(days)
+      .sort((lhs, rhs) => compareDesc(parseISO(lhs), parseISO(rhs)))
+      .reduce((obj, key) => {
+        obj[key] = days[key]
+        return obj
+      }, {})
+
+    let keysx = Object.keys(days).sort((lhs, rhs) => {
+      let l = parseISO(lhs)
+      let r = parseISO(rhs)
+      return compareDesc(l, r)
+    })
 
     return {
       patient: patient,
-      observations: observations,
-      medications: medications,
-      days: days
+      days: orderedDays
     }
   }
 }

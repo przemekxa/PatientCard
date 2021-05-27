@@ -1,6 +1,7 @@
-import React /*, { useState, useEffect }*/ from 'react'
-import FilterBar from './FilterBar/FilterBar'
+import React from 'react'
+import NameFilterBar from '../FilterBar/NameFilterBar'
 import { CircularProgress } from '@material-ui/core'
+import PatientList from './PatientList'
 
 class PatientListPage extends React.Component {
   constructor(props) {
@@ -21,14 +22,14 @@ class PatientListPage extends React.Component {
     if(this.state.isLoading) {
       patientsList = <CircularProgress style={{margin: '16px auto', display: 'block'}} />
     } else {
-      patientsList = this.state.patients.map(p => 
-        <p key={p.id} onClick={() => this.props.onClick(p.id)} style={{cursor: 'pointer'}}>{p.name}</p>
-      )
+      patientsList = <PatientList items={this.state.patients} onClick={(id) => this.props.onClick(id)}/>
     }
     return (
       <div className="mainBox">
+
+        <h1 style={{margin: '0 0 32px 0'}}>Search for a patient</h1>
         
-        <FilterBar
+        <NameFilterBar
           onFilter={(nameFilter, displayCountFilter) => this.updatePatientList(nameFilter, displayCountFilter)}
           />
         

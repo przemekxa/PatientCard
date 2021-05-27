@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import styles from './styles'
 
-class FilterBar extends React.Component {
+class NameFilterBar extends React.Component {
 
   constructor(props) {
     super(props)
@@ -58,4 +58,4 @@ class FilterBar extends React.Component {
   }
 }
 
-export default FilterBar
+export default NameFilterBar
