@@ -1,6 +1,5 @@
-import { render } from '@testing-library/react';
 import { Chart, registerables } from 'chart.js'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 Chart.register(...registerables);
 
@@ -15,8 +14,6 @@ class WeightChart extends React.Component {
 
   componentDidMount() {
 
-    console.log('install')
-
     this.myChart = new Chart(this.chartRef.current, {
       type: 'line',
       data: {
@@ -27,9 +24,6 @@ class WeightChart extends React.Component {
             data: this.props.weightsData,
           }
         ]
-      },
-      options: {
-        
       }
     })  
   }

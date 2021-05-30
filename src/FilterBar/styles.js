@@ -1,5 +1,3 @@
-import { red } from "@material-ui/core/colors"
-
 const styles = {
   container: {
     display: "flex",

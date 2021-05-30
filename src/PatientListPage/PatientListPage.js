@@ -34,8 +34,6 @@ class PatientListPage extends React.Component {
           />
         
         {patientsList}
-        
-        
       
       </div>
     );

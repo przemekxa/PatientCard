@@ -40,6 +40,7 @@ class PatientHomePage extends React.Component {
     let weightsLabels = []
     let weightsData = []
 
+    // eslint-disable-next-line no-unused-vars
     for (const [_, events] of Object.entries(days)) {
       events
         .filter(e => e.name === 'Body Weight')

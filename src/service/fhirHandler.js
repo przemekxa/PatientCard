@@ -17,7 +17,7 @@ class FhirHandler {
   }
 
   async getPatientList(nameFilter, count) {
-    let names = nameFilter ? `&given=${nameFilter}` : ''
+    let names = nameFilter ? `&name=${nameFilter}` : ''
     let patients = await fetch(`${this.url}Patient?_count=${count}${names}`)
     patients = await patients.json()
     if(patients.total === 0) {
@@ -181,20 +181,12 @@ class FhirHandler {
       }
     } while(link)
 
-    
-
     let orderedDays = Object.keys(days)
       .sort((lhs, rhs) => compareDesc(parseISO(lhs), parseISO(rhs)))
       .reduce((obj, key) => {
         obj[key] = days[key]
         return obj
       }, {})
-
-    let keysx = Object.keys(days).sort((lhs, rhs) => {
-      let l = parseISO(lhs)
-      let r = parseISO(rhs)
-      return compareDesc(l, r)
-    })
 
     return {
       patient: patient,

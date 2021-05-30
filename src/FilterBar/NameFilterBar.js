@@ -53,6 +53,14 @@ class NameFilterBar extends React.Component {
           size="large"
           onClick={() => this.props.onFilter(this.state.nameFilter, this.state.displayCountFilter)}
         >FILTER</Button>
+        <Button
+          variant="outlined" 
+          size="large"
+          onClick={() => {
+            this.setState({nameFilter: '', displayCountFilter: ''})
+            this.props.onFilter('', '')
+          }}
+        >CLEAR</Button>
       </div>
     )
   }
