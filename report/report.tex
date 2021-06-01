@@ -22,6 +22,8 @@
 
 \begin{document} 
 	\maketitle
+
+	\newpage
 	
 	\section{Wstęp}
 		Celem projektu było stworzenie elektronicznej karty pacjenta, wykorzystującej standard FHIR do pobrania danych.
@@ -29,14 +31,18 @@
 	\section{Technologia i wykorzystany serwer}
 		Projekt został zrealizowany jako aplikacja webowa.
 		Do jej stworzenia wykorzystaliśmy javascriptową bibliotekę \textbf{React}.
-		Pomocne okazały się też paczki:  
-		\texttt{material-ui} -- interfejs użytkownika,
-		\texttt{chart.js} -- stworzenie wykresów oraz
-		\texttt{date-fns} -- manipulacja datami.
-		
+		Pomocne okazały się też paczki:
+		\begin{description}
+			\item[material-ui] -- interfejs użytkownika
+			\item[chart.js] -- stworzenie wykresów
+			\item[date-fns] -- manipulacja datami
+		\end{description}
+
 		Ze względu na niską jakość danych dostępnych na publicznym serwerze,
 		skorzystaliśmy z własnego, uruchomionego lokalnie.
 		Zaimportowaliśmy do niego dane kilkunastu pacjentów wygenerowanych w ramach projektu Synthea.
+		Nie korzystaliśmy z żadnej biblioteki do obsługi standardu FHIR.
+		Informacje zwrócone przez serwer interpretowaliśmy samodzielnie.
 	
 	\section{Interfejs użytkownika}
 	
@@ -47,6 +53,8 @@
 		\includegraphics[width=.8\linewidth]{img/list1.png}
 		\caption{Strona główna -- lista wszystkich pacjentów}
 	\end{figure}
+	Lista pacjentów umożliwia filtrowanie ich po imieniu i nazwisku,
+	a także ograniczenie liczby wyświetlanych rezultatów.
 	
 	\begin{figure}[!h]
 		\centering
@@ -54,6 +62,7 @@
 		\caption{Wyszukiwanie pacjentów po nazwisku}
 	\end{figure}
 	
+	\newpage
 	\subsection{Informacje o pacjencie}
 	
 	\begin{figure}[!h]
